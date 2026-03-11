@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -9,10 +11,19 @@ import { Search, Heart, ShoppingCart, Headphones, Menu } from "lucide-react";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+
+  const navLinks = [
+    { name: "Home", path: "/" },
+    { name: "Shop", path: "/shop" },
+    { name: "Categories", path: "/categories" },
+    { name: "Brands", path: "/brands" },
+  ];
 
   return (
     <nav className="border-b bg-white sticky top-0 z-50">
       <div className="container mx-auto flex items-center justify-between py-3 px-4 gap-6">
+
         {/* Logo */}
         <Link
           href="/"
@@ -37,26 +48,27 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Menu */}
-        <div className="hidden lg:flex items-center gap-6 font-medium text-gray-700">
-          <Link href="/" className="hover:text-green-600 transition">
-            Home
-          </Link>
+        <div className="hidden lg:flex items-center gap-6 font-medium">
 
-          <Link href="/shop" className="hover:text-green-600 transition">
-            Shop
-          </Link>
+          {navLinks.map((link) => (
+            <Link
+              key={link.path}
+              href={link.path}
+              className={`transition ${
+                pathname === link.path
+                  ? "text-green-600 font-semibold"
+                  : "text-gray-700 hover:text-green-600"
+              }`}
+            >
+              {link.name}
+            </Link>
+          ))}
 
-          <Link href="/categories" className="hover:text-green-600 transition">
-            Categories
-          </Link>
-
-          <Link href="/brands" className="hover:text-green-600 transition">
-            Brands
-          </Link>
         </div>
 
         {/* Right Section */}
         <div className="flex items-center gap-4">
+
           {/* Support */}
           <div className="hidden md:flex items-center gap-2 text-sm">
             <Headphones className="text-green-600" size={20} />
@@ -97,21 +109,20 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {mobileOpen && (
         <div className="lg:hidden border-t bg-white p-4 space-y-4">
-          <Link href="/" className="block hover:text-green-600">
-            Home
-          </Link>
 
-          <Link href="/shop" className="block hover:text-green-600">
-            Shop
-          </Link>
-
-          <Link href="/categories" className="block hover:text-green-600">
-            Categories
-          </Link>
-
-          <Link href="/brands" className="block hover:text-green-600">
-            Brands
-          </Link>
+          {navLinks.map((link) => (
+            <Link
+              key={link.path}
+              href={link.path}
+              className={`block ${
+                pathname === link.path
+                  ? "text-green-600 font-semibold"
+                  : "text-gray-700 hover:text-green-600"
+              }`}
+            >
+              {link.name}
+            </Link>
+          ))}
 
           <Button className="w-full bg-green-600 hover:bg-green-700">
             Sign In
