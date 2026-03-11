@@ -1,110 +1,84 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useState } from "react"
+import Link from "next/link";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-
-import {
-  Search,
-  Heart,
-  ShoppingCart,
-  Headphones,
-  Menu,
-  ChevronDown
-} from "lucide-react"
-
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem
-} from "@/components/ui/dropdown-menu"
+import { Search, Heart, ShoppingCart, Headphones, Menu } from "lucide-react";
 
 export default function Navbar() {
-
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <nav className="border-b bg-white w-full">
-
-      <div className="container mx-auto flex items-center justify-between py-3 gap-4">
-
+    <nav className="border-b bg-white sticky top-0 z-50">
+      <div className="container mx-auto flex items-center justify-between py-3 px-4 gap-6">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 text-xl font-bold text-green-600">
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-xl font-bold text-green-600"
+        >
           🛒 FreshCart
         </Link>
 
         {/* Search */}
         <div className="hidden md:flex relative w-[420px]">
           <Input
-            placeholder="Search for products, brands and more..."
-            className="rounded-full pr-12"
+            placeholder="Search for products..."
+            className="rounded-full pr-12 h-11"
           />
 
           <Button
             size="icon"
-            className="absolute right-1 top-1 rounded-full bg-green-600 hover:bg-green-700"
+            className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full bg-green-600 hover:bg-green-700 h-9 w-9"
           >
             <Search className="w-4 h-4 text-white" />
           </Button>
         </div>
 
         {/* Desktop Menu */}
-        <div className="hidden lg:flex items-center gap-6 font-medium">
+        <div className="hidden lg:flex items-center gap-6 font-medium text-gray-700">
+          <Link href="/" className="hover:text-green-600 transition">
+            Home
+          </Link>
 
-          <Link href="/">Home</Link>
+          <Link href="/shop" className="hover:text-green-600 transition">
+            Shop
+          </Link>
 
-          <Link href="/">Shop</Link>
+          <Link href="/categories" className="hover:text-green-600 transition">
+            Categories
+          </Link>
 
-          {/* Categories Dropdown */}
-          <DropdownMenu>
-
-            <DropdownMenuTrigger className="flex items-center gap-1">
-              Categories
-              <ChevronDown size={16} />
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent>
-
-              <DropdownMenuItem>Vegetables</DropdownMenuItem>
-              <DropdownMenuItem>Fruits</DropdownMenuItem>
-              <DropdownMenuItem>Snacks</DropdownMenuItem>
-              <DropdownMenuItem>Beverages</DropdownMenuItem>
-
-            </DropdownMenuContent>
-
-          </DropdownMenu>
-
-          <Link href="/">Brands</Link>
-
+          <Link href="/brands" className="hover:text-green-600 transition">
+            Brands
+          </Link>
         </div>
 
-        {/* Right Side */}
+        {/* Right Section */}
         <div className="flex items-center gap-4">
-
           {/* Support */}
           <div className="hidden md:flex items-center gap-2 text-sm">
-            <Headphones className="text-green-600" size={20}/>
+            <Headphones className="text-green-600" size={20} />
             <div className="leading-tight">
-              <p>Support</p>
+              <p className="font-medium">Support</p>
               <p className="text-gray-500 text-xs">24/7 Help</p>
             </div>
           </div>
 
           {/* Wishlist */}
-          <Heart className="cursor-pointer" size={20} />
+          <Heart
+            className="cursor-pointer hover:text-red-500 transition"
+            size={20}
+          />
 
           {/* Cart */}
           <div className="relative cursor-pointer">
-
             <ShoppingCart size={20} />
 
-            <span className="absolute -top-2 -right-2 bg-green-600 text-white text-xs rounded-full px-1">
+            <span className="absolute -top-2 -right-2 bg-green-600 text-white text-xs rounded-full px-1.5 py-[1px]">
               2
             </span>
-
           </div>
 
           {/* Sign In */}
@@ -112,37 +86,38 @@ export default function Navbar() {
             Sign In
           </Button>
 
-          {/* Mobile Menu */}
+          {/* Mobile Menu Button */}
           <Menu
             className="lg:hidden cursor-pointer"
             onClick={() => setMobileOpen(!mobileOpen)}
           />
-
         </div>
-
       </div>
 
       {/* Mobile Menu */}
       {mobileOpen && (
+        <div className="lg:hidden border-t bg-white p-4 space-y-4">
+          <Link href="/" className="block hover:text-green-600">
+            Home
+          </Link>
 
-        <div className="lg:hidden border-t p-4 space-y-4">
+          <Link href="/shop" className="block hover:text-green-600">
+            Shop
+          </Link>
 
-          <Link href="/" className="block">Home</Link>
+          <Link href="/categories" className="block hover:text-green-600">
+            Categories
+          </Link>
 
-          <Link href="/" className="block">Shop</Link>
+          <Link href="/brands" className="block hover:text-green-600">
+            Brands
+          </Link>
 
-          <Link href="/" className="block">Categories</Link>
-
-          <Link href="/" className="block">Brands</Link>
-
-          <Button className="w-full bg-green-600">
+          <Button className="w-full bg-green-600 hover:bg-green-700">
             Sign In
           </Button>
-
         </div>
-
       )}
-
     </nav>
-  )
+  );
 }
