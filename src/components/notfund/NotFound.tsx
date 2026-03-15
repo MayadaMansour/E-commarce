@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { Home, SearchX } from "lucide-react"
 
-export default function NotFound() {
+export default function NotFoundComponent() {
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-6">
 
