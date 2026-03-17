@@ -23,7 +23,6 @@ export default function Navbar() {
   return (
     <nav className="border-b bg-white sticky top-0 z-50">
       <div className="container mx-auto flex items-center justify-between py-3 px-4 gap-6">
-
         {/* Logo */}
         <Link
           href="/"
@@ -49,7 +48,6 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden lg:flex items-center gap-6 font-medium">
-
           {navLinks.map((link) => (
             <Link
               key={link.path}
@@ -63,12 +61,10 @@ export default function Navbar() {
               {link.name}
             </Link>
           ))}
-
         </div>
 
         {/* Right Section */}
         <div className="flex items-center gap-4">
-
           {/* Support */}
           <div className="hidden md:flex items-center gap-2 text-sm">
             <Headphones className="text-green-600" size={20} />
@@ -85,13 +81,13 @@ export default function Navbar() {
           />
 
           {/* Cart */}
-          <div className="relative cursor-pointer">
+          <Link href="/cart" className="relative cursor-pointer">
             <ShoppingCart size={20} />
 
             <span className="absolute -top-2 -right-2 bg-green-600 text-white text-xs rounded-full px-1.5 py-[1px]">
               2
             </span>
-          </div>
+          </Link>
 
           {/* Sign In */}
           <Button className="hidden md:flex rounded-full bg-green-600 hover:bg-green-700">
@@ -109,7 +105,6 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {mobileOpen && (
         <div className="lg:hidden border-t bg-white p-4 space-y-4">
-
           {navLinks.map((link) => (
             <Link
               key={link.path}

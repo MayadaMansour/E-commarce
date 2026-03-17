@@ -6,6 +6,8 @@ import Footer from "../components/layout/footer/footer";
 import { cn } from "@/lib/utils";
 import TopBar from "../components/layout/topbar/topbar";
 import Features from "../components/layout/features/features";
+import { Toaster } from "sonner";  
+
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -37,6 +39,7 @@ export default function RootLayout({
         <TopBar />
         <Navbar />
         {children}
+        <Toaster />
         <Features />
         <Footer />
       </body>
