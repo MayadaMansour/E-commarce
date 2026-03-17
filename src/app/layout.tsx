@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "../components/navbar/navbar";
-import Footer from "../components/footer/footer";
+import Navbar from "../components/layout/navbar/navbar";
+import Footer from "../components/layout/footer/footer";
 import { cn } from "@/lib/utils";
-import TopBar from "../components/topbar/topbar";
-import Features from "../components/features/features";
+import TopBar from "../components/layout/topbar/topbar";
+import Features from "../components/layout/features/features";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
