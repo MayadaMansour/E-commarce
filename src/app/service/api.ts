@@ -50,10 +50,25 @@ class ApiServices {
     return data;
   }
 
-    async clearProductsCart(): Promise<CartResponse> {
+  async clearProductsCart(): Promise<CartResponse> {
     const response = await fetch(`${BASE_URL}/api/v2/cart`, {
       method: "Delete",
       headers: header,
+    });
+    const data = await response.json();
+    return data;
+  }
+
+  async updateProductsCart(
+    productId: string,
+    count: number,
+  ): Promise<CartResponse> {
+    const response = await fetch(`${BASE_URL}/api/v2/cart/${productId}`, {
+      method: "Put",
+      headers: header,
+      body: JSON.stringify({
+        count,
+      }),
     });
     const data = await response.json();
     return data;

@@ -10,11 +10,13 @@ import {
   Star,
   ChevronLeft,
   ChevronRight,
+  Loader2,
 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { Product } from "../../app/interface/Product ";
 import { apiServices } from "@/src/app/service/api";
 import { toast } from "sonner";
+import { useCart } from "../../context/CartContext";
 
 export default function ProductCard(product: Product) {
   const {
@@ -34,6 +36,7 @@ export default function ProductCard(product: Product) {
   const [currentImage, setCurrentImage] = useState(0);
   const [isAddingCart, setAddingCart] = useState(false);
   const [isAddedCart, setAddedCart] = useState(false);
+  const { refreshCart } = useCart();
 
   const nextImage = () => {
     setCurrentImage((prev) =>
@@ -63,6 +66,7 @@ export default function ProductCard(product: Product) {
           color: "green",
         },
       });
+      await refreshCart();
       setAddedCart(true);
       setTimeout(() => setAddedCart(false), 2000);
     } catch (error) {
@@ -73,72 +77,77 @@ export default function ProductCard(product: Product) {
   };
 
   return (
-    <Link href={`/shop/${_id}`}>
-      <Card className="group h-[460px] border rounded-2xl overflow-hidden transition duration-300 hover:shadow-2xl hover:-translate-y-1 flex flex-col">
-        {/* IMAGE */}
-        <div className="relative h-64 bg-white overflow-hidden flex-shrink-0">
-          <Image
-            src={productImages[currentImage]}
-            alt={title}
-            fill
-            className="object-contain p-4"
-          />
+    <Card className="group h-[460px] border rounded-2xl overflow-hidden transition duration-300 hover:shadow-2xl hover:-translate-y-1 flex flex-col">
+      {/* IMAGE */}
+      <div className="relative h-64 bg-white overflow-hidden flex-shrink-0">
+        <Image
+          src={productImages[currentImage]}
+          alt={title}
+          fill
+          className="object-contain p-4"
+        />
 
-          {/* POPULAR BADGE */}
-          {isPopular && (
-            <span className="absolute top-3 left-3 text-xs px-3 py-1 rounded-full text-white font-semibold bg-orange-500">
-              POPULAR
-            </span>
-          )}
+        {/* POPULAR BADGE */}
+        {isPopular && (
+          <span className="absolute top-3 left-3 text-xs px-3 py-1 rounded-full text-white font-semibold bg-orange-500">
+            POPULAR
+          </span>
+        )}
 
-          {/* FAVORITE */}
-          <button className="absolute top-3 right-3 bg-white p-2 rounded-full shadow hover:bg-red-500 hover:text-white transition">
-            <Heart size={18} />
-          </button>
+        {/* FAVORITE */}
+        <button className="absolute top-3 right-3 bg-white p-2 rounded-full shadow hover:bg-red-500 hover:text-white transition">
+          <Heart size={18} />
+        </button>
 
-          {/* ARROWS */}
-          {productImages.length > 1 && (
-            <>
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  prevImage();
-                }}
-                className="absolute left-2 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow"
-              >
-                <ChevronLeft size={18} />
-              </button>
-
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  nextImage();
-                }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow"
-              >
-                <ChevronRight size={18} />
-              </button>
-            </>
-          )}
-
-          {/* ADD TO CART HOVER */}
-          <div className="absolute bottom-0 left-0 w-full opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0 transition duration-300 p-3">
-            <Button
+        {/* ARROWS */}
+        {productImages.length > 1 && (
+          <>
+            <button
               onClick={(e) => {
                 e.preventDefault();
-                handleAddCart();
+                prevImage();
               }}
-              color="primary"
-              className="w-full flex items-center gap-2"
-              isLoading={isAddingCart}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow"
             >
-              <ShoppingCart size={16} />
-              {isAddedCart ? "Added" : "Add To Cart"}
-            </Button>
-          </div>
-        </div>
+              <ChevronLeft size={18} />
+            </button>
 
-        {/* BODY */}
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                nextImage();
+              }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </>
+        )}
+
+        {/* ADD TO CART HOVER */}
+        <div className="absolute bottom-0 left-0 w-full opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0 transition duration-300 p-3">
+          <button
+            onClick={handleAddCart}
+            disabled={isAddingCart}
+            className="w-full flex items-center justify-center gap-2 bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition disabled:opacity-70"
+          >
+            {isAddingCart ? (
+              <>
+                <Loader2 className="animate-spin" size={20} />
+                Adding...
+              </>
+            ) : (
+              <>
+                <ShoppingCart size={20} />
+                Add To Cart
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* BODY */}
+      <Link href={`/shop/${_id}`}>
         <CardBody className="space-y-3 flex-grow">
           {category && (
             <p className="text-xs text-gray-400 uppercase">{category.name}</p>
@@ -155,24 +164,23 @@ export default function ProductCard(product: Product) {
             </div>
           )}
         </CardBody>
+      </Link>
+      {/* FOOTER */}
+      <CardFooter className="flex justify-between items-end">
+        <div className="flex flex-col leading-tight">
+          <span className="text-lg font-bold text-primary">
+            {formatPrice(newPrice)}
+          </span>
 
-        {/* FOOTER */}
-        <CardFooter className="flex justify-between items-end">
-          <div className="flex flex-col leading-tight">
-            <span className="text-lg font-bold text-primary">
-              {formatPrice(newPrice)}
-            </span>
+          <span className="text-sm text-gray-400 line-through mt-1">
+            {formatPrice(oldPrice)}
+          </span>
+        </div>
 
-            <span className="text-sm text-gray-400 line-through mt-1">
-              {formatPrice(oldPrice)}
-            </span>
-          </div>
-
-          <Button isIconOnly color="primary" radius="full" variant="flat">
-            <ShoppingCart size={18} />
-          </Button>
-        </CardFooter>
-      </Card>
-    </Link>
+        <Button isIconOnly color="primary" radius="full" variant="flat">
+          <ShoppingCart size={18} />
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }

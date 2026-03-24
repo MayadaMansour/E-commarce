@@ -1,33 +1,56 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
 import { Loader2, Minus, Plus, Trash2 } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { CartProduct as ICartProduct } from "@/src/app/interface/cart_interfaces/CartProduct ";
+import Image from "next/image";
 
 export default function CartProduct({
   item,
   removeItem,
+  updateCount,
 }: {
-item: ICartProduct;
+  item: ICartProduct;
   removeItem: (productId: string) => Promise<void>;
+  updateCount: (productId: string, count: number) => Promise<void>;
 }) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isUpdatingCount, setIsUpdatingCount] = useState(false);
+  const [isIncrease, setIsIncrease] = useState(false);
+  const [isDecrease, setIsDecrease] = useState(false);
 
   async function handleDeleteItem() {
-    setIsLoading(true);
+    setIsDeleting(true);
     await removeItem(item.product._id);
-    setIsLoading(false);
+    setIsDeleting(false);
+  }
+  async function handleUpdateItemCount(count: number) {
+    if (count > item.count) {
+      setIsIncrease(true);
+    } else {
+      setIsDecrease(true);
+    }
+    setIsUpdatingCount(true);
+    await updateCount(item.product._id, count);
+    setIsUpdatingCount(false);
+    setIsIncrease(false);
+    setIsDecrease(false);
   }
 
   return (
     <div key={item._id} className="flex gap-4 rounded-lg border bg-card p-4">
       <div className="w-24 shrink-0">
-        <AspectRatio ratio={1} className="overflow-hidden rounded-md bg-muted">
-          <img
+        <AspectRatio
+          ratio={1}
+          className="overflow-hidden rounded-md bg-muted relative"
+        >
+          <Image
             src={item.product.imageCover}
             alt={item.product.title}
-            className="size-full object-cover"
+            fill
+            className="object-cover"
+            sizes="96px"
           />
         </AspectRatio>
       </div>
@@ -39,21 +62,31 @@ item: ICartProduct;
 
         <div className="flex items-center gap-2">
           <Button
+            disabled={item.count == 1 || isUpdatingCount}
             variant="outline"
             size="icon"
             className="size-8"
-            // onClick={() => updateQuantity(item.id, -1)}
+            onClick={() => handleUpdateItemCount(item.count - 1)}
           >
-            <Minus className="size-3" />
+            {isDecrease ? (
+              <Loader2 className="size-3 animate-spin" />
+            ) : (
+              <Minus className="size-3" />
+            )}
           </Button>
           <span className="w-8 text-center">{item.count}</span>
           <Button
             variant="outline"
             size="icon"
             className="size-8"
-            // onClick={() => updateQuantity(item.id, 1)}
+            onClick={() => handleUpdateItemCount(item.count + 1)}
+            disabled={isUpdatingCount}
           >
-            <Plus className="size-3" />
+            {isIncrease ? (
+              <Loader2 className="size-3 animate-spin" />
+            ) : (
+              <Plus className="size-3" />
+            )}
           </Button>
         </div>
       </div>
@@ -72,9 +105,9 @@ item: ICartProduct;
           size="sm"
           className="text-muted-foreground"
           onClick={handleDeleteItem}
-          disabled={isLoading}
+          disabled={isDeleting}
         >
-          {isLoading ? (
+          {isDeleting ? (
             <Loader2 className="mr-1 size-4 animate-spin" />
           ) : (
             <Trash2 className="mr-1 size-4" />

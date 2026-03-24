@@ -3,15 +3,15 @@
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-
+import { useCart } from "../../../context/CartContext";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
 import { Search, Heart, ShoppingCart, Headphones, Menu } from "lucide-react";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+  const { cartCount } = useCart();
 
   const navLinks = [
     { name: "Home", path: "/" },
@@ -84,9 +84,11 @@ export default function Navbar() {
           <Link href="/cart" className="relative cursor-pointer">
             <ShoppingCart size={20} />
 
-            <span className="absolute -top-2 -right-2 bg-green-600 text-white text-xs rounded-full px-1.5 py-[1px]">
-              2
-            </span>
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-green-600 text-white text-xs rounded-full px-1.5 py-[1px]">
+                {cartCount}
+              </span>
+            )}
           </Link>
 
           {/* Sign In */}

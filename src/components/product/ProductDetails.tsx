@@ -16,6 +16,7 @@ import { Product } from "../../app/interface/Product ";
 import { apiServices } from "@/src/app/service/api";
 import { toast } from "sonner";
 import { formatPrice } from "@/lib/utils";
+import { useCart } from "../../context/CartContext";
 
 const MAX_STARS = 5;
 
@@ -26,6 +27,7 @@ export default function ProductDetail({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
   const [openGallery, setOpenGallery] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { refreshCart } = useCart();
 
   const next = () =>
     setCurrentImage((prev) => (prev === images.length - 1 ? 0 : prev + 1));
@@ -77,6 +79,7 @@ export default function ProductDetail({ product }: { product: Product }) {
         color: "green",
       },
     });
+    await refreshCart();
   }
 
   return (

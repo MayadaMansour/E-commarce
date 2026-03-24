@@ -9,20 +9,29 @@ import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
 import { apiServices } from "../service/api";
 import CartProduct from "@/src/components/product/CartProduct";
+import { useCart } from "../../context/CartContext";
 
 const ShoppingCart2 = ({ cart }: { cart: CartResponse }) => {
   const [innerCart, setInnerCart] = useState<CartResponse>(cart);
   const [isLoading, setIsLoading] = useState(false);
+  const { refreshCart } = useCart();
 
   async function removeItem(productId: string) {
     const response = await apiServices.deleteProductsCart(productId);
     setInnerCart(response);
+    await refreshCart();
   }
   async function clearCart() {
     setIsLoading(true);
     const response = await apiServices.clearProductsCart();
     setInnerCart(response);
     setIsLoading(false);
+    await refreshCart();
+  }
+
+  async function updateCount(productId: string, count: number) {
+    const response = await apiServices.updateProductsCart(productId, count);
+    setInnerCart(response);
   }
 
   if (innerCart?.numOfCartItems === 0) {
@@ -33,7 +42,7 @@ const ShoppingCart2 = ({ cart }: { cart: CartResponse }) => {
           <p className="mb-8 text-muted-foreground">
             Looks like you haven't added anything yet.
           </p>
-          <Button asChild >
+          <Button asChild>
             <Link href="/shop">Continue Shopping</Link>
           </Button>
         </div>
@@ -55,6 +64,7 @@ const ShoppingCart2 = ({ cart }: { cart: CartResponse }) => {
                   key={item._id}
                   item={item}
                   removeItem={removeItem}
+                  updateCount={updateCount}
                 />
               ))}
             </div>
