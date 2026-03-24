@@ -22,7 +22,6 @@ const MAX_STARS = 5;
 
 export default function ProductDetail({ product }: { product: Product }) {
   const images = product.images?.length ? product.images : [product.imageCover];
-
   const [currentImage, setCurrentImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [openGallery, setOpenGallery] = useState(false);

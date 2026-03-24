@@ -21,7 +21,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="border-b bg-white sticky top-0 z-50">
+    <nav className="border-b bg-white sticky top-0 z-50 mb-5">
       <div className="container mx-auto flex items-center justify-between py-3 px-4 gap-6">
         {/* Logo */}
         <Link

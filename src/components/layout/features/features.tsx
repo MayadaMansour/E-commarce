@@ -4,7 +4,7 @@ import { Truck, RotateCcw, ShieldCheck, Headphones } from "lucide-react"
 
 export default function Features() {
   return (
-    <div className="bg-green-50 py-6 border-b">
+    <div className="bg-green-50 py-6 border-b mt-5">
 
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
 

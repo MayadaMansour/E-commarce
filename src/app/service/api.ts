@@ -1,4 +1,6 @@
+import { Brand } from "../interface/Brand ";
 import { CartResponse } from "../interface/cart_interfaces/CartResponse ";
+import { Category } from "../interface/Category ";
 import { Product } from "../interface/Product ";
 
 const BASE_URL = "https://ecommerce.routemisr.com";
@@ -70,6 +72,17 @@ class ApiServices {
         count,
       }),
     });
+    const data = await response.json();
+    return data;
+  }
+  async getCategories(): Promise<{ data: Category[] }> {
+    const response = await fetch(`${BASE_URL}/api/v1/categories`);
+    const data = await response.json();
+    return data;
+  }
+
+  async getBrands(): Promise<{ data: Brand[] }> {
+    const response = await fetch(`${BASE_URL}/api/v1/brands`);
     const data = await response.json();
     return data;
   }
