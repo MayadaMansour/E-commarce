@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Card, CardBody, CardFooter, Button } from "@heroui/react";
+import { Card, CardBody, CardFooter } from "@heroui/react";
 import {
   Heart,
   ShoppingCart,
@@ -13,7 +13,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
-import { Product } from "../../app/interface/Product ";
+import { Product } from "../../app/interface/Product";
 import { apiServices } from "@/src/app/service/api";
 import { toast } from "sonner";
 import { useCart } from "../../context/CartContext";
@@ -40,13 +40,13 @@ export default function ProductCard(product: Product) {
 
   const nextImage = () => {
     setCurrentImage((prev) =>
-      prev === productImages.length - 1 ? 0 : prev + 1,
+      prev === productImages.length - 1 ? 0 : prev + 1
     );
   };
 
   const prevImage = () => {
     setCurrentImage((prev) =>
-      prev === 0 ? productImages.length - 1 : prev - 1,
+      prev === 0 ? productImages.length - 1 : prev - 1
     );
   };
 
@@ -57,16 +57,17 @@ export default function ProductCard(product: Product) {
 
   const handleAddCart = async () => {
     if (isAddedCart || isAddingCart) return;
+
     try {
       setAddingCart(true);
       const response = await apiServices.addProductsToCart(_id);
-      console.log(response);
+
       toast.success(response.message, {
-        style: {
-          color: "green",
-        },
+        style: { color: "green" },
       });
+
       await refreshCart();
+
       setAddedCart(true);
       setTimeout(() => setAddedCart(false), 2000);
     } catch (error) {
@@ -77,26 +78,28 @@ export default function ProductCard(product: Product) {
   };
 
   return (
-    <Card className="group h-[460px] border rounded-2xl overflow-hidden transition duration-300 hover:shadow-2xl hover:-translate-y-1 flex flex-col">
+    <Card className="group h-[440px] border rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02] flex flex-col">
+      
       {/* IMAGE */}
-      <div className="relative h-64 bg-white overflow-hidden flex-shrink-0">
+      <div className="relative h-56 bg-gray-50 overflow-hidden flex-shrink-0">
+        
         <Image
           src={productImages[currentImage]}
           alt={title}
           fill
-          className="object-contain p-4"
+          className="object-contain p-3 transition-transform duration-300 group-hover:scale-105"
         />
 
-        {/* POPULAR BADGE */}
+        {/* BADGE */}
         {isPopular && (
-          <span className="absolute top-3 left-3 text-xs px-3 py-1 rounded-full text-white font-semibold bg-orange-500">
-            POPULAR
+          <span className="absolute top-3 left-3 text-[11px] px-3 py-1 rounded-full text-white font-semibold bg-orange-500 shadow">
+            🔥 Popular
           </span>
         )}
 
         {/* FAVORITE */}
-        <button className="absolute top-3 right-3 bg-white p-2 rounded-full shadow hover:bg-red-500 hover:text-white transition">
-          <Heart size={18} />
+        <button className="absolute top-3 right-3 bg-white/90 backdrop-blur p-2 rounded-full shadow hover:bg-red-500 hover:text-white transition">
+          <Heart size={16} />
         </button>
 
         {/* ARROWS */}
@@ -107,9 +110,9 @@ export default function ProductCard(product: Product) {
                 e.preventDefault();
                 prevImage();
               }}
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow"
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full shadow opacity-0 group-hover:opacity-100 transition"
             >
-              <ChevronLeft size={18} />
+              <ChevronLeft size={16} />
             </button>
 
             <button
@@ -117,28 +120,28 @@ export default function ProductCard(product: Product) {
                 e.preventDefault();
                 nextImage();
               }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full shadow opacity-0 group-hover:opacity-100 transition"
             >
-              <ChevronRight size={18} />
+              <ChevronRight size={16} />
             </button>
           </>
         )}
 
-        {/* ADD TO CART HOVER */}
+        {/* ADD TO CART */}
         <div className="absolute bottom-0 left-0 w-full opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0 transition duration-300 p-3">
           <button
             onClick={handleAddCart}
             disabled={isAddingCart}
-            className="w-full flex items-center justify-center gap-2 bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition disabled:opacity-70"
+            className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-green-700 transition"
           >
             {isAddingCart ? (
               <>
-                <Loader2 className="animate-spin" size={20} />
+                <Loader2 className="animate-spin" size={16} />
                 Adding...
               </>
             ) : (
               <>
-                <ShoppingCart size={20} />
+                <ShoppingCart size={16} />
                 Add To Cart
               </>
             )}
@@ -148,38 +151,45 @@ export default function ProductCard(product: Product) {
 
       {/* BODY */}
       <Link href={`/shop/${_id}`}>
-        <CardBody className="space-y-3 flex-grow">
+        <CardBody className="space-y-1.5 flex-grow px-4 pt-3 pb-1">
+          
           {category && (
-            <p className="text-xs text-gray-400 uppercase">{category.name}</p>
+            <p className="text-[11px] text-gray-400 uppercase tracking-wide">
+              {category.name}
+            </p>
           )}
 
-          <h3 className="font-semibold text-base line-clamp-3">{title}</h3>
+          <h3 className="font-medium text-sm leading-snug line-clamp-2 group-hover:text-green-600 transition">
+            {title}
+          </h3>
 
           {ratingsAverage && (
-            <div className="flex items-center gap-1 text-yellow-500">
-              <Star size={16} fill="currentColor" />
-              <span className="text-sm text-gray-700">
+            <div className="flex items-center gap-1 text-yellow-500 text-xs mt-1">
+              <Star size={14} fill="currentColor" />
+              <span className="text-gray-600">
                 {ratingsAverage} ({ratingsQuantity})
               </span>
             </div>
           )}
         </CardBody>
       </Link>
+
       {/* FOOTER */}
-      <CardFooter className="flex justify-between items-end">
-        <div className="flex flex-col leading-tight">
-          <span className="text-lg font-bold text-primary">
+      <CardFooter className="flex justify-between items-center px-4 pt-2 pb-4">
+        
+        <div className="flex flex-col gap-[2px]">
+          <span className="text-base font-semibold text-green-600">
             {formatPrice(newPrice)}
           </span>
 
-          <span className="text-sm text-gray-400 line-through mt-1">
+          <span className="text-[11px] text-gray-400 line-through">
             {formatPrice(oldPrice)}
           </span>
         </div>
 
-        <Button isIconOnly color="primary" radius="full" variant="flat">
-          <ShoppingCart size={18} />
-        </Button>
+        <button className="bg-green-100 p-2.5 rounded-full hover:bg-green-600 hover:text-white transition">
+          <ShoppingCart size={16} />
+        </button>
       </CardFooter>
     </Card>
   );

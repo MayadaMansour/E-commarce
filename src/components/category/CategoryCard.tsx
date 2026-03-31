@@ -11,9 +11,10 @@ export default function CategoryCard({
 }) {
   return (
     <Link href={`/categories/${category._id}`} className="group block">
-      <div className="relative h-56 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500">
+      <div className="relative h-50 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 ">
 
         {/* IMAGE */}
+        
         <Image
           src={category.image || "/placeholder.png"}
           alt={category.name}
