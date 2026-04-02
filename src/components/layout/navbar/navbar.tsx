@@ -75,10 +75,15 @@ export default function Navbar() {
           </div>
 
           {/* Wishlist */}
-          <Heart
-            className="cursor-pointer hover:text-red-500 transition"
-            size={20}
-          />
+
+          <Link
+            href="/wishlist"
+            className={`cursor-pointer transition ${
+              pathname === "/wishlist" ? "text-red-500" : "hover:text-red-500"
+            }`}
+          >
+            <Heart size={20} />
+          </Link>
 
           {/* Cart */}
           <Link href="/cart" className="relative cursor-pointer">

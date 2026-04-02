@@ -34,7 +34,8 @@ const ShoppingCart2 = ({ cart }: { cart: CartResponse }) => {
     setInnerCart(response);
   }
 
-  if (innerCart?.numOfCartItems === 0) {
+
+ if (!innerCart?.data || innerCart.numOfCartItems === 0) {
     return (
       <section>
         <div className="container max-w-lg text-center m-40">

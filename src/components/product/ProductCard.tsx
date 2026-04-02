@@ -36,17 +36,19 @@ export default function ProductCard(product: Product) {
   const [currentImage, setCurrentImage] = useState(0);
   const [isAddingCart, setAddingCart] = useState(false);
   const [isAddedCart, setAddedCart] = useState(false);
+  const [isFav, setIsFav] = useState(false);
+  const [isAddingWish, setAddingWish] = useState(false);
   const { refreshCart } = useCart();
 
   const nextImage = () => {
     setCurrentImage((prev) =>
-      prev === productImages.length - 1 ? 0 : prev + 1
+      prev === productImages.length - 1 ? 0 : prev + 1,
     );
   };
 
   const prevImage = () => {
     setCurrentImage((prev) =>
-      prev === 0 ? productImages.length - 1 : prev - 1
+      prev === 0 ? productImages.length - 1 : prev - 1,
     );
   };
 
@@ -57,17 +59,13 @@ export default function ProductCard(product: Product) {
 
   const handleAddCart = async () => {
     if (isAddedCart || isAddingCart) return;
-
     try {
       setAddingCart(true);
       const response = await apiServices.addProductsToCart(_id);
-
       toast.success(response.message, {
         style: { color: "green" },
       });
-
       await refreshCart();
-
       setAddedCart(true);
       setTimeout(() => setAddedCart(false), 2000);
     } catch (error) {
@@ -77,12 +75,31 @@ export default function ProductCard(product: Product) {
     }
   };
 
+  const handleAddWishList = async () => {
+    if (isAddingWish) return;
+    try {
+      setAddingWish(true);
+      const res = await apiServices.addWishListItem(_id);
+      console.log("WISHLIST:", res);
+      if (res.status === "success") {
+        setIsFav(true);
+        toast.success("Added To WishList❤️", {
+          style: { color: "green" },
+        });
+      } else {
+        toast.error(res.status);
+      }
+    } catch (error) {
+      toast.error("Failed to add product");
+    } finally {
+      setAddingWish(false);
+    }
+  };
+
   return (
     <Card className="group h-[440px] border rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02] flex flex-col">
-      
       {/* IMAGE */}
       <div className="relative h-56 bg-gray-50 overflow-hidden flex-shrink-0">
-        
         <Image
           src={productImages[currentImage]}
           alt={title}
@@ -98,8 +115,20 @@ export default function ProductCard(product: Product) {
         )}
 
         {/* FAVORITE */}
-        <button className="absolute top-3 right-3 bg-white/90 backdrop-blur p-2 rounded-full shadow hover:bg-red-500 hover:text-white transition">
-          <Heart size={16} />
+        <button
+          onClick={handleAddWishList}
+          className={`absolute top-3 right-3 backdrop-blur p-2 rounded-full shadow transition 
+  ${
+    isFav
+      ? "bg-red-500 text-white"
+      : "bg-white/90 hover:bg-red-500 hover:text-white"
+  }`}
+        >
+          {isAddingWish ? (
+            <Loader2 className="animate-spin" size={16} />
+          ) : (
+            <Heart size={16} fill={isFav ? "white" : "none"} />
+          )}
         </button>
 
         {/* ARROWS */}
@@ -152,7 +181,6 @@ export default function ProductCard(product: Product) {
       {/* BODY */}
       <Link href={`/shop/${_id}`}>
         <CardBody className="space-y-1.5 flex-grow px-4 pt-3 pb-1">
-          
           {category && (
             <p className="text-[11px] text-gray-400 uppercase tracking-wide">
               {category.name}
@@ -176,7 +204,6 @@ export default function ProductCard(product: Product) {
 
       {/* FOOTER */}
       <CardFooter className="flex justify-between items-center px-4 pt-2 pb-4">
-        
         <div className="flex flex-col gap-[2px]">
           <span className="text-base font-semibold text-green-600">
             {formatPrice(newPrice)}

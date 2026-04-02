@@ -6,3 +6,4 @@ export interface CartProduct {
   product: ProductCartDetails;
   price: number;
 }
+
