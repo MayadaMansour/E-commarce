@@ -14,20 +14,22 @@ interface WishlistHeaderProps {
 }
 
 export default function WishlistHeader({ initialItems }: WishlistHeaderProps) {
-  const [items, setItems] = useState<ProductWishList[]>(initialItems);
-  const { refreshCart } = useCart();
+  const [items, setItems] = useState<ProductWishList[]>(
+    Array.isArray(initialItems) ? initialItems : []
+  );
+
+  const { refreshCart, refreshWishlist, setWishlistCount } = useCart();
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
-  // ✅ delete item
   async function handleDelete(productId: string) {
     try {
       setIsDeleting(productId);
-
       const response = await apiServices.deleteWishListItem(productId);
-
       if (response?.status === "success") {
-        setItems(response.data || []);
+        setItems((prev) => prev.filter((item) => item._id !== productId));
+        setWishlistCount((prev) => Math.max(prev - 1, 0));
         await refreshCart();
+        await refreshWishlist();
       }
     } catch (error) {
       console.error(error);
@@ -36,7 +38,6 @@ export default function WishlistHeader({ initialItems }: WishlistHeaderProps) {
     }
   }
 
-  // ✅ empty state
   if (!items.length) {
     return (
       <section>
@@ -61,7 +62,6 @@ export default function WishlistHeader({ initialItems }: WishlistHeaderProps) {
     <div className="px-6 py-10">
       {/* HEADER */}
       <div className="mb-8 flex items-center justify-between">
-        {/* LEFT */}
         <div className="flex items-center gap-3">
           <div className="bg-red-100 p-2 rounded-full">
             <Heart className="text-red-500" size={18} />
@@ -69,20 +69,25 @@ export default function WishlistHeader({ initialItems }: WishlistHeaderProps) {
 
           <div>
             <h2 className="text-lg font-semibold">My Wishlist</h2>
-            <p className="text-xs text-gray-400">{items.length} items saved</p>
+            <p className="text-xs text-gray-400">
+              {items.length} items saved
+            </p>
           </div>
         </div>
 
-        {/* RIGHT (اختياري) */}
         <Link href="/shop" className="text-sm text-green-600 hover:underline">
           Continue Shopping →
         </Link>
       </div>
 
-      {/* ITEMS LIST */}
+      {/* ITEMS */}
       <div className="flex flex-col gap-4">
         {items.map((item) => (
-          <WishlistItem key={item._id} item={item} onDelete={handleDelete} />
+          <WishlistItem
+            key={item._id} 
+            item={item}
+            onDelete={handleDelete}
+          />
         ))}
       </div>
     </div>

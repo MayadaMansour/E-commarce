@@ -10,12 +10,14 @@ import { formatPrice } from "@/lib/utils";
 import { apiServices } from "../service/api";
 import CartProduct from "@/src/components/product/CartProduct";
 import { useCart } from "../../context/CartContext";
+import { useRouter } from "next/navigation";
 
 const ShoppingCart2 = ({ cart }: { cart: CartResponse }) => {
   const [innerCart, setInnerCart] = useState<CartResponse>(cart);
   const [isLoading, setIsLoading] = useState(false);
-  const [checkoutLoading, setcheckoutLoading] = useState(false);
+  // const [checkoutLoading, setcheckoutLoading] = useState(false);
   const { refreshCart } = useCart();
+  const router = useRouter();
 
   async function removeItem(productId: string) {
     const response = await apiServices.deleteProductsCart(productId);
@@ -33,21 +35,21 @@ const ShoppingCart2 = ({ cart }: { cart: CartResponse }) => {
     const response = await apiServices.updateProductsCart(productId, count);
     setInnerCart(response);
   }
-async function handleCheckout() {
-  try {
-    setcheckoutLoading(true);
-    const response = await apiServices.checkout(cart.cartId);
-    if (response.status === "success") {
-      location.href = response.session.url;
-    } else {
-      alert(response.message);
-    }
-  } catch (error) {
-    console.log(error);
-  } finally {
-    setcheckoutLoading(false);
-  }
-}
+  // async function handleCheckout() {
+  //   try {
+  //     setcheckoutLoading(true);
+  //     const response = await apiServices.checkout(cart.cartId);
+  //     if (response.status === "success") {
+  //       location.href = response.session.url;
+  //     } else {
+  //       alert(response.message);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     setcheckoutLoading(false);
+  //   }
+  // }
 
   if (!innerCart?.data || innerCart.numOfCartItems === 0) {
     return (
@@ -114,13 +116,20 @@ async function handleCheckout() {
                 </div>
               </div>
 
-              <Button
+              {/* <Button
                 size="lg"
                 className="mt-6 w-full"
                 onClick={handleCheckout}
                 disabled={checkoutLoading}
               >
                 {checkoutLoading&&<Loader2 className="animate-spin"/>}
+                Proceed to Checkout
+              </Button> */}
+              <Button
+                size="lg"
+                className="mt-6 w-full bg-green-600 hover:bg-green-500"
+                onClick={() => router.push(`/checkout/${cart.cartId}`)}
+              >
                 Proceed to Checkout
               </Button>
 

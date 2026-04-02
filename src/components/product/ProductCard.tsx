@@ -38,7 +38,7 @@ export default function ProductCard(product: Product) {
   const [isAddedCart, setAddedCart] = useState(false);
   const [isFav, setIsFav] = useState(false);
   const [isAddingWish, setAddingWish] = useState(false);
-  const { refreshCart } = useCart();
+const { refreshCart, setWishlistCount } = useCart();
 
   const nextImage = () => {
     setCurrentImage((prev) =>
@@ -75,26 +75,26 @@ export default function ProductCard(product: Product) {
     }
   };
 
-  const handleAddWishList = async () => {
-    if (isAddingWish) return;
-    try {
-      setAddingWish(true);
-      const res = await apiServices.addWishListItem(_id);
-      console.log("WISHLIST:", res);
-      if (res.status === "success") {
-        setIsFav(true);
-        toast.success("Added To WishList❤️", {
-          style: { color: "green" },
-        });
-      } else {
-        toast.error(res.status);
-      }
-    } catch (error) {
-      toast.error("Failed to add product");
-    } finally {
-      setAddingWish(false);
+ const handleAddWishList = async () => {
+  if (isAddingWish) return;
+  try {
+    setAddingWish(true);
+    const res = await apiServices.addWishListItem(_id);
+    if (res.status === "success") {
+      setIsFav(true);
+      setWishlistCount((prev) => prev + 1);
+      toast.success("Added To WishList❤️", {
+        style: { color: "green" },
+      });
+    } else {
+      toast.error(res.status);
     }
-  };
+  } catch (error) {
+    toast.error("Failed to add product");
+  } finally {
+    setAddingWish(false);
+  }
+};
 
   return (
     <Card className="group h-[440px] border rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02] flex flex-col">

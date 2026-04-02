@@ -1,3 +1,4 @@
+import { AddressResponse } from "../interface/allorders_interfaces/AddressResponse ";
 import { Order } from "../interface/allorders_interfaces/Order";
 import { Brand } from "../interface/Brand ";
 import { CartResponse } from "../interface/cart_interfaces/CartResponse ";
@@ -116,36 +117,61 @@ class ApiServices {
     return await response.json();
   }
 
- async checkout(cartId: string) {
+  async checkout(
+    cartId: string,
+    shippingAddress: {
+      details: string;
+      phone: string;
+      city: string;
+    },
+  ) {
     const response = await fetch(
       `${BASE_URL}/api/v1/orders/checkout-session/${cartId}?url=http://localhost:3000`,
       {
         method: "POST",
         headers: header,
         body: JSON.stringify({
-          shippingAddress: {
-            details: "details",
-            phone: "01010700999",
-            city: "Cairo",
-          },
+          shippingAddress,
         }),
-      }
+      },
     );
 
     return await response.json();
   }
 
- async getAllOrders(userId: string): Promise<Order[]> {
-  const response = await fetch(
-    `${BASE_URL}/api/v1/orders/user/${userId}`,
-    {
+  async getAllOrders(userId: string): Promise<Order[]> {
+    const response = await fetch(`${BASE_URL}/api/v1/orders/user/${userId}`, {
       headers: header,
       cache: "no-store",
-    }
-  );
-  return await response.json(); 
-}
+    });
 
+    const data = await response.json();
+    return Array.isArray(data) ? data : [];
+  }
+
+  async addAddress(address: {
+    name: string;
+    details: string;
+    phone: string;
+    city: string;
+  }): Promise<AddressResponse> {
+    const response = await fetch(`${BASE_URL}/api/v1/addresses`, {
+      method: "POST",
+      headers: header,
+      body: JSON.stringify(address),
+    });
+
+    return await response.json();
+  }
+
+  async getUserAddresses(): Promise<AddressResponse> {
+    const response = await fetch(`${BASE_URL}/api/v1/addresses`, {
+      headers: header,
+    });
+
+    return await response.json();
+  }
+ 
 }
 
 export const apiServices = new ApiServices();

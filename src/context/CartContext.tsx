@@ -5,19 +5,22 @@ import { apiServices } from "@/src/app/service/api";
 
 type CartContextType = {
   cartCount: number;
+  wishlistCount: number;
   refreshCart: () => Promise<void>;
+  refreshWishlist: () => Promise<void>;
+  setWishlistCount: React.Dispatch<React.SetStateAction<number>>; 
 };
 
 const CartContext = createContext<CartContextType | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [cartCount, setCartCount] = useState(0);
-  const [wishlistCount, setWishlistCount] = useState(0);
+  const [cartCount, setCartCount] = useState<number>(0);
+  const [wishlistCount, setWishlistCount] = useState<number>(0);
 
   async function refreshCart() {
     try {
       const res = await apiServices.getProductsCart();
-      setCartCount(res.numOfCartItems || 0);
+      setCartCount(res?.numOfCartItems ?? 0);
     } catch (error) {
       console.log("Cart Error:", error);
       setCartCount(0);
@@ -27,9 +30,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   async function refreshWishlist() {
     try {
       const res = await apiServices.getWishListItem();
-      setWishlistCount(res.count || 0);
+
+      setWishlistCount(
+        res?.count ??
+        res?.data?.length ??
+        0
+      );
     } catch (error) {
-      console.log("Cart Error:", error);
+      console.log("Wishlist Error:", error);
       setWishlistCount(0);
     }
   }
@@ -43,12 +51,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     <CartContext.Provider
       value={{
         cartCount,
-        refreshCart,
         wishlistCount,
+        refreshCart,
         refreshWishlist,
+        setWishlistCount, 
       }}
     >
-      {" "}
       {children}
     </CartContext.Provider>
   );
