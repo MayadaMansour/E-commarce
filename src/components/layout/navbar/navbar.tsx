@@ -11,7 +11,7 @@ import { Search, Heart, ShoppingCart, Headphones, Menu } from "lucide-react";
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
-  const { cartCount } = useCart();
+  const { cartCount, wishlistCount } = useCart();
 
   const navLinks = [
     { name: "Home", path: "/" },
@@ -76,13 +76,19 @@ export default function Navbar() {
 
           {/* Wishlist */}
 
-          <Link
-            href="/wishlist"
-            className={`cursor-pointer transition ${
-              pathname === "/wishlist" ? "text-red-500" : "hover:text-red-500"
-            }`}
-          >
-            <Heart size={20} />
+          <Link href="/wishlist" className="relative cursor-pointer">
+            <Heart
+              size={20}
+              className={`transition ${
+                pathname === "/wishlist" ? "text-red-500" : "hover:text-red-500"
+              }`}
+            />
+
+            {wishlistCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1.5 py-[1px]">
+                {wishlistCount}
+              </span>
+            )}
           </Link>
 
           {/* Cart */}

@@ -14,6 +14,7 @@ import { useCart } from "../../context/CartContext";
 const ShoppingCart2 = ({ cart }: { cart: CartResponse }) => {
   const [innerCart, setInnerCart] = useState<CartResponse>(cart);
   const [isLoading, setIsLoading] = useState(false);
+  const [checkoutLoading, setcheckoutLoading] = useState(false);
   const { refreshCart } = useCart();
 
   async function removeItem(productId: string) {
@@ -28,14 +29,27 @@ const ShoppingCart2 = ({ cart }: { cart: CartResponse }) => {
     setIsLoading(false);
     await refreshCart();
   }
-
   async function updateCount(productId: string, count: number) {
     const response = await apiServices.updateProductsCart(productId, count);
     setInnerCart(response);
   }
+async function handleCheckout() {
+  try {
+    setcheckoutLoading(true);
+    const response = await apiServices.checkout(cart.cartId);
+    if (response.status === "success") {
+      location.href = response.session.url;
+    } else {
+      alert(response.message);
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    setcheckoutLoading(false);
+  }
+}
 
-
- if (!innerCart?.data || innerCart.numOfCartItems === 0) {
+  if (!innerCart?.data || innerCart.numOfCartItems === 0) {
     return (
       <section>
         <div className="container max-w-lg text-center m-40">
@@ -50,7 +64,6 @@ const ShoppingCart2 = ({ cart }: { cart: CartResponse }) => {
       </section>
     );
   }
-
   return (
     <section className="py-5">
       <div className="container grid gap-8">
@@ -101,7 +114,13 @@ const ShoppingCart2 = ({ cart }: { cart: CartResponse }) => {
                 </div>
               </div>
 
-              <Button size="lg" className="mt-6 w-full">
+              <Button
+                size="lg"
+                className="mt-6 w-full"
+                onClick={handleCheckout}
+                disabled={checkoutLoading}
+              >
+                {checkoutLoading&&<Loader2 className="animate-spin"/>}
                 Proceed to Checkout
               </Button>
 

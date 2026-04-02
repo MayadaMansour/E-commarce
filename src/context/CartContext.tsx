@@ -12,6 +12,7 @@ const CartContext = createContext<CartContextType | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cartCount, setCartCount] = useState(0);
+  const [wishlistCount, setWishlistCount] = useState(0);
 
   async function refreshCart() {
     try {
@@ -23,12 +24,31 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  async function refreshWishlist() {
+    try {
+      const res = await apiServices.getWishListItem();
+      setWishlistCount(res.count || 0);
+    } catch (error) {
+      console.log("Cart Error:", error);
+      setWishlistCount(0);
+    }
+  }
+
   useEffect(() => {
     refreshCart();
+    refreshWishlist();
   }, []);
 
   return (
-    <CartContext.Provider value={{ cartCount, refreshCart }}>
+    <CartContext.Provider
+      value={{
+        cartCount,
+        refreshCart,
+        wishlistCount,
+        refreshWishlist,
+      }}
+    >
+      {" "}
       {children}
     </CartContext.Provider>
   );

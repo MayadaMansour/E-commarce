@@ -1,8 +1,8 @@
+import { Order } from "../interface/allorders_interfaces/Order";
 import { Brand } from "../interface/Brand ";
 import { CartResponse } from "../interface/cart_interfaces/CartResponse ";
 import { Category } from "../interface/Category ";
 import { Product } from "../interface/Product ";
-import { ProductWishList } from "../interface/wishlist_interface/ProductInterface";
 import { WishlistResponse } from "../interface/wishlist_interface/WishListResponse";
 
 const BASE_URL = "https://ecommerce.routemisr.com";
@@ -89,35 +89,63 @@ class ApiServices {
     return data;
   }
 
-
-
-
   async addWishListItem(productId: string): Promise<WishlistResponse> {
-  const response = await fetch(`${BASE_URL}/api/v1/wishlist`, {
-    method: "POST",
-    headers: header,
-    body: JSON.stringify({ productId }),
-  });
+    const response = await fetch(`${BASE_URL}/api/v1/wishlist`, {
+      method: "POST",
+      headers: header,
+      body: JSON.stringify({ productId }),
+    });
 
-  return await response.json();
+    return await response.json();
+  }
+
+  async getWishListItem(): Promise<WishlistResponse> {
+    const response = await fetch(`${BASE_URL}/api/v1/wishlist`, {
+      headers: header,
+    });
+
+    return await response.json();
+  }
+
+  async deleteWishListItem(productId: string): Promise<WishlistResponse> {
+    const response = await fetch(`${BASE_URL}/api/v1/wishlist/${productId}`, {
+      method: "DELETE",
+      headers: header,
+    });
+
+    return await response.json();
+  }
+
+ async checkout(cartId: string) {
+    const response = await fetch(
+      `${BASE_URL}/api/v1/orders/checkout-session/${cartId}?url=http://localhost:3000`,
+      {
+        method: "POST",
+        headers: header,
+        body: JSON.stringify({
+          shippingAddress: {
+            details: "details",
+            phone: "01010700999",
+            city: "Cairo",
+          },
+        }),
+      }
+    );
+
+    return await response.json();
+  }
+
+ async getAllOrders(userId: string): Promise<Order[]> {
+  const response = await fetch(
+    `${BASE_URL}/api/v1/orders/user/${userId}`,
+    {
+      headers: header,
+      cache: "no-store",
+    }
+  );
+  return await response.json(); 
 }
 
-async getWishListItem(): Promise<WishlistResponse> {
-  const response = await fetch(`${BASE_URL}/api/v1/wishlist`, {
-    headers: header,
-  });
-
-  return await response.json();
-}
-
-async deleteWishListItem(productId: string): Promise<WishlistResponse> {
-  const response = await fetch(`${BASE_URL}/api/v1/wishlist/${productId}`, {
-    method: "DELETE",
-    headers: header,
-  });
-
-  return await response.json();
-}
 }
 
 export const apiServices = new ApiServices();
